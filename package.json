@@ -1,0 +1,28 @@
+{
+  "name": "webaudioapi-experiments",
+  "version": "1.0.0",
+  "description": "Some investigations of the Web Audio API",
+  "main": "index.js",
+  "scripts": {
+    "start": "live-server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mlennox/webaudioapi-experiments.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mlennox/webaudioapi-experiments/issues"
+  },
+  "homepage": "https://github.com/mlennox/webaudioapi-experiments#readme",
+  "devDependencies": {
+    "eslint": "^6.2.2",
+    "eslint-config-prettier": "^6.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-prettier": "^3.1.0",
+    "live-server": "^1.2.1",
+    "prettier": "^1.18.2"
+  }
+}

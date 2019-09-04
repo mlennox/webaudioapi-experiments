@@ -1,2 +1,7 @@
-# webaudioapi-experiments
-Experiments with the web audio api
+# Web Audio API - experiments
+
+Some investigations of the Web Audio API
+
+## PeriodicWave
+
+

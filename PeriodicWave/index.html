@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script type="module">
+    import { periodicWave } from './periodicWave.js';
+
+    window.addEventListener('load', event => {
+      periodicWave();  
+    });
+  </script>
+  
+  <title>PeriodicWave - Web Audio API</title>
+</head>
+<body>
+  <h1>PeriodicWave</h1>
+  <p>The definition of <em>PeriodicWave</em> is</p>
+  <p><q>The createPeriodicWave() method of the BaseAudioContext Interface is used to create a PeriodicWave, which is used to define a periodic waveform that can be used to shape the output of an OscillatorNode.</q></p>
+  <p>So, what does that mean?</p>
+  <h2>A quick aside - OscillatorNode</h2>
+  <p>An OscillatorNode can generate a range of pitched waveforms which are usually output to generate audio. They can also be used to modulate other WebAudio objects, but we'll not touch on that here.</p>
+  <p>In its simplest form the OscillatorNode generates a sine-wave at a specified frequency. There are built in options to generate square, sawtooth, and triangle each with its own specific sound.</p>
+  <p>INSERT TESTER FOR EACH WAVEFORM</p>
+  <p>It is also possible to select a <em>custom</em> waveform, which is generated using details from the <em>PeriodicWave</em>.</p>
+  <h2></h2>
+  <p id="waveformTest"></p>
+</body>
+</html>
