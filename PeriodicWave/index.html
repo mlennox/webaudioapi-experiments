@@ -6,9 +6,13 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <script type="module">
     import { periodicWave } from './periodicWave.js';
+    import { waveformDisplay } from '../common/waveformDisplay.js';
 
     window.addEventListener('load', event => {
       periodicWave();  
+
+      const waveform = new waveformDisplay();
+      waveform.init();
     });
   </script>
   
@@ -25,6 +29,6 @@
   <p>INSERT TESTER FOR EACH WAVEFORM</p>
   <p>It is also possible to select a <em>custom</em> waveform, which is generated using details from the <em>PeriodicWave</em>.</p>
   <h2></h2>
-  <p id="waveformTest"></p>
+  <canvas id="waveformTest" class="oscilloscope" style="height: 300px; width: 100%; background: red;"></canvas>
 </body>
 </html>
