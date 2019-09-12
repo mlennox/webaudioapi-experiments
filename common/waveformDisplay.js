@@ -5,10 +5,8 @@ export function waveformDisplay(canvasSelector = '.oscilloscope', audioContext =
   this.analyser = {
     instance: null,
     dataArray: [],
-    // canvasContext: null,
-    // visualiser: null,
-    // width: 0,
-    // height: 0
+    timeData: [],
+    frequencyData: []
   };
 
   this.display = {
@@ -36,8 +34,8 @@ waveformDisplay.prototype.initAnalyser = function () {
   this.analyser.instance = this.audio.context.createAnalyser();
   this.analyser.instance.fftSize = 2048;
   var bufferLength = this.analyser.instance.frequencyBinCount;
-  this.analyser.dataArray = new Uint8Array(bufferLength);
-  // this.analyser.instance.getByteTimeDomainData(this.analyser.dataArray);
+  this.analyser.timeData = new Uint8Array(bufferLength);
+  this.analyser.frequencyData = new Uint8Array(bufferLength);
 
   this.audio.source.connect(this.analyser.instance);
 };
@@ -53,12 +51,17 @@ waveformDisplay.prototype.initCanvas = function () {
 waveformDisplay.prototype.startDrawing = function () {
   this.analyser.visualiser = requestAnimationFrame(this.startDrawing.bind(this));
 
-  this.analyser.instance.getByteTimeDomainData(this.analyser.dataArray);
   this.display.canvasContext.fillStyle = 'rgb(200, 200, 200)';
   this.display.canvasContext.fillRect(0, 0, this.display.width, this.display.height);
 
-  for (let bin = 0; bin < this.analyser.instance.frequencyBinCount; bin++) {
-    let currentValue = this.analyser.dataArray[bin];
+  this.drawFrequencyDomain();
+  this.drawTimeDomain();
+}
+
+waveformDisplay.prototype.drawTimeDomain = function () {
+  this.analyser.instance.getByteTimeDomainData(this.analyser.timeData);
+
+  this.analyser.timeData.forEach((currentValue, bin) => {
     let percent = currentValue / 256;
     let height = this.display.height * percent;
     let offset = this.display.height - height - 1;
@@ -66,15 +69,25 @@ waveformDisplay.prototype.startDrawing = function () {
     let hue = bin / this.analyser.instance.frequencyBinCount * 360;
     this.display.canvasContext.fillStyle = `hsl(${hue}, 100%, 50%)`;
     this.display.canvasContext.fillRect(bin * barWidth, offset, barWidth, height);
-  }
+  });
+}
+
+waveformDisplay.prototype.drawFrequencyDomain = function () {
+  this.analyser.instance.getByteFrequencyData(this.analyser.frequencyData);
+
+  this.analyser.frequencyData.forEach((currentValue, bin) => {
+    let percent = currentValue / 256;
+    let height = this.display.height * percent;
+    let offset = this.display.height - height - 1;
+    let barWidth = this.display.width / this.analyser.instance.frequencyBinCount;
+    this.display.canvasContext.fillStyle = 'black';
+    this.display.canvasContext.fillRect(bin * barWidth, offset, 1, 1);
+  });
 }
 
 waveformDisplay.prototype.stopDrawing = function () {
 
 }
-// source.connect(analyser);
-
-
 
 
 function defaultOscillator(audioContext) {
