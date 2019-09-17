@@ -7,12 +7,17 @@
   <script type="module">
     import { periodicWave } from './periodicWave.js';
     import { waveformDisplay } from '../common/waveformDisplay.js';
+    import { loadAudio } from '../common/loadAudio.js';
 
     window.addEventListener('load', event => {
       periodicWave();  
-
-      const waveform = new waveformDisplay();
-      waveform.init();
+      const audioContext = new window.AudioContext();
+      new loadAudio({fileName: '../samples/epicmusic.wav', audioContext}).then((audio) => {
+        const waveform = new waveformDisplay({ source: audio, audioContext });
+        waveform.init({});
+        audio.start();
+      });
+      
     });
   </script>
   

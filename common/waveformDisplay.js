@@ -1,10 +1,9 @@
-export function waveformDisplay(canvasSelector = '.oscilloscope', audioContext = new window.AudioContext(), source) {
+export function waveformDisplay({ canvasSelector = '.oscilloscope', audioContext = new window.AudioContext(), source } = {}) {
 
   console.log('waveform init');
 
   this.analyser = {
     instance: null,
-    dataArray: [],
     timeData: [],
     frequencyData: []
   };
@@ -51,37 +50,45 @@ waveformDisplay.prototype.initCanvas = function () {
 waveformDisplay.prototype.startDrawing = function () {
   this.analyser.visualiser = requestAnimationFrame(this.startDrawing.bind(this));
 
-  this.display.canvasContext.fillStyle = 'rgb(200, 200, 200)';
+  this.display.canvasContext.fillStyle = 'rgb(0,0,0)';
   this.display.canvasContext.fillRect(0, 0, this.display.width, this.display.height);
 
-  this.drawFrequencyDomain();
-  this.drawTimeDomain();
-}
+  // draw the frequency domain data
+  this.drawData({
+    dataType: 'frequency',
+    colourFn: ({ traceDimensions }) => {
+      const frequencyFill = this.display.canvasContext.createLinearGradient(0, 0, traceDimensions.width, this.display.height);
+      frequencyFill.addColorStop(0.000, 'rgba(255, 255, 170, 1.000)');
+      frequencyFill.addColorStop(1.0, 'rgba(186, 0, 0, 1.000)');
 
-waveformDisplay.prototype.drawTimeDomain = function () {
-  this.analyser.instance.getByteTimeDomainData(this.analyser.timeData);
-
-  this.analyser.timeData.forEach((currentValue, bin) => {
-    let percent = currentValue / 256;
-    let height = this.display.height * percent;
-    let offset = this.display.height - height - 1;
-    let barWidth = this.display.width / this.analyser.instance.frequencyBinCount;
-    let hue = bin / this.analyser.instance.frequencyBinCount * 360;
-    this.display.canvasContext.fillStyle = `hsl(${hue}, 100%, 50%)`;
-    this.display.canvasContext.fillRect(bin * barWidth, offset, barWidth, height);
+      return frequencyFill;
+    },
+    dimensionFn: (height, width) => {
+      return {
+        height,
+        width
+      }
+    }
   });
+  // draw the time domain data
+  this.drawData();
 }
 
-waveformDisplay.prototype.drawFrequencyDomain = function () {
-  this.analyser.instance.getByteFrequencyData(this.analyser.frequencyData);
 
-  this.analyser.frequencyData.forEach((currentValue, bin) => {
+waveformDisplay.prototype.drawData = function ({ dataType = 'time', colourFn = () => 'white', dimensionFn = (height, width) => { return { height: 1, width }; } } = {}) {
+
+  let dataSource = this.analyser[`${dataType}Data`];
+
+  this.analyser.instance[`getByte${dataType === 'time' ? 'TimeDomain' : 'Frequency'}Data`](dataSource);
+
+  dataSource.forEach((currentValue, bin) => {
     let percent = currentValue / 256;
     let height = this.display.height * percent;
     let offset = this.display.height - height - 1;
     let barWidth = this.display.width / this.analyser.instance.frequencyBinCount;
-    this.display.canvasContext.fillStyle = 'black';
-    this.display.canvasContext.fillRect(bin * barWidth, offset, 1, 1);
+    const traceDimensions = dimensionFn(height, barWidth);
+    this.display.canvasContext.fillStyle = colourFn({ bin, frequencyBinCount: this.analyser.instance.frequencyBinCount, currentValue, traceDimensions })
+    this.display.canvasContext.fillRect(bin * barWidth, offset, traceDimensions.width, traceDimensions.height);
   });
 }
 
@@ -92,8 +99,8 @@ waveformDisplay.prototype.stopDrawing = function () {
 
 function defaultOscillator(audioContext) {
   const osc = audioContext.createOscillator();
-  osc.type = 'triangle';
-  osc.frequency.setValueAtTime(1, audioContext.currentTime);
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(120, audioContext.currentTime);
   osc.start();
   return osc;
 }
