@@ -11,12 +11,6 @@
 
     window.addEventListener('load', event => {
       periodicWave();  
-      const audioContext = new window.AudioContext();
-      new loadAudio({fileName: '../samples/epicmusic.wav', audioContext}).then((audio) => {
-        const waveform = new waveformDisplay({ source: audio, audioContext });
-        waveform.init({});
-        audio.start();
-      });
       
     });
   </script>
